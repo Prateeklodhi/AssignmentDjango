@@ -1,0 +1,40 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{% block title %}Ticketing System{% endblock %}</title>
+		<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+	</head>
+	<body>
+		<header>
+			<nav>
+				<ul>
+                    {% if user.is_authenticated %}
+					<li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'password_change' %}">Change Password</a></li>
+					<form action="{% url 'logout' %}" method="POST">
+						{% csrf_token %}
+						<button type="submit">Logout</button>
+					</form>
+					{% else %}
+					<li><a href="{% url 'login' %}">Login</a></li>
+					<li><a href="{% url 'register' %}">Register</a></li>
+					{% endif %}
+				</ul>
+			</nav>
+		</header>
+
+		<main>
+			{% block content %}
+			<!-- This is where the page-specific content will go -->
+			{% endblock %}
+		</main>
+
+		<footer>
+			<p>&copy; 2024 Ticketing System</p>
+		</footer>
+	</body>
+</html>

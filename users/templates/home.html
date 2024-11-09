@@ -1,0 +1,15 @@
+{% extends 'base_generic.html' %}
+
+{% block title %}Home - Ticketing System{% endblock %}
+
+{% block content %}
+<h2>Welcome to the Ticketing System!</h2>
+<p>Here you can manage your tickets, view updates, and more.</p>
+
+<h3>Your Tickets</h3>
+<ul>
+    {% for ticket in tickets %}
+        <li>{{ ticket.title }} - {{ ticket.status }}</li>
+    {% endfor %}
+</ul>
+{% endblock %}
