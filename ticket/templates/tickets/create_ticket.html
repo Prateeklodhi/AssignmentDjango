@@ -1,0 +1,12 @@
+{% extends 'base_generic.html' %} {% block content %}
+<div class="container">
+	<h1>Create a New Ticket</h1>
+	<div class="row">
+		<form method="POST">
+			{% csrf_token %} {{ form.as_p }}
+			<!-- This renders the form fields as paragraphs -->
+			<button type="submit" class="btn btn-primary">Create Ticket</button>
+		</form>
+	</div>
+</div>
+{% endblock %}

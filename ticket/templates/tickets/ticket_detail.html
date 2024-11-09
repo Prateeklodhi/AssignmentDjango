@@ -1,0 +1,83 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ ticket.title }}</h1>
+    <p><strong>Description:</strong> {{ ticket.description }}</p>
+    <p><strong>Priority:</strong> {{ ticket.get_priority_display }}</p>
+    <p><strong>Creator:</strong> {{ ticket.creator.first_name }} {{ ticket.creator.last_name }}</p>
+    <p><strong>Created at:</strong> {{ ticket.created_at }}</p>
+
+    <hr />
+    
+    <!-- Display ticket status -->
+    <p><strong>Status:</strong> {{ ticket.get_status_display }}</p>
+
+    {% if user in ticket.assigned_users.all or user.is_superuser %}
+        <!-- Form to update ticket status -->
+        <h2>Update Ticket Status</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ status_form.as_p }}
+            <button type="submit" name="update_status" class="btn btn-primary">Update Status</button>
+        </form>
+    {% endif %}
+
+    <hr />
+
+    <!-- Activity Form -->
+    <h2>Activities</h2>
+    <form method="POST">
+        {% csrf_token %}
+        {{ activity_form.as_p }}
+        <button type="submit" class="btn btn-primary">Add Activity</button>
+    </form>
+
+    <h3>Ticket Activities</h3>
+    <ul>
+        {% for activity in activities %}
+            <li>{{ activity.user }}: {{ activity.activity_type }} at {{ activity.created_at }}</li>
+        {% empty %}
+            <li>No activities yet.</li>
+        {% endfor %}
+    </ul>
+
+    <hr />
+
+    <!-- Assigned Users List -->
+    <h3>Assigned Users</h3>
+    <ul>
+        {% for assignment in ticket.assignments.all %}
+            <li>{{ assignment.user.first_name }} {{ assignment.user.last_name }}</li>
+        {% empty %}
+            <li>No users assigned yet.</li>
+        {% endfor %}
+    </ul>
+
+    <hr />
+
+    <!-- Link to Assign Users to Ticket -->
+    <a href="{% url 'assign_ticket' ticket.uuid %}" class="btn btn-secondary">Assign Users</a>
+</div>
+
+<!-- WebSocket for real-time updates -->
+<script>
+    const ticketSocket = new WebSocket('ws://' + window.location.host + '/ws/tickets/');
+
+    ticketSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        const message = data.message;
+
+        // Update the ticket's activities list in real-time
+        const activityList = document.querySelector('ul');
+        const newActivity = document.createElement('li');
+        newActivity.innerHTML = message;
+        activityList.appendChild(newActivity);
+    };
+
+    ticketSocket.onclose = function (e) {
+        console.error('Ticket WebSocket closed unexpectedly');
+    };
+</script>
+
+{% endblock %}

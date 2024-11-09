@@ -1,0 +1,23 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+    <div class="container">
+        <h1>Assign Users to Ticket: {{ ticket.title }}</h1>
+
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="users">Assign Users</label>
+                <select multiple class="form-control" name="users" id="users">
+                    {% for user in users %}
+                        <option value="{{ user.uuid }}">{{ user.first_name }} {{ user.last_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Assign</button>
+        </form>
+
+        <hr>
+        <a href="{% url 'ticket_detail' ticket.uuid %}" class="btn btn-secondary">Back to Ticket</a>
+    </div>
+{% endblock %}

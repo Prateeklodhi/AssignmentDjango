@@ -42,8 +42,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig',
-    'ticket.apps.TicketConfig'
+    'channels',
+    'users',
+    'ticket'
 ]
 
 MIDDLEWARE = [
@@ -65,6 +66,16 @@ AUTH_USER_MODEL = 'users.CustomUser'
 # Redirect to home page after logout
 LOGOUT_REDIRECT_URL = 'login'
 
+ASGI_APPLICATION = 'ticket_system.asgi.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 ROOT_URLCONF = 'ticket_system.urls'
 
@@ -97,6 +108,7 @@ WSGI_APPLICATION = 'ticket_system.wsgi.application'
 
 LOGIN_REDIRECT_URL = 'dashboard'  # Redirect to the dashboard after login
 
+LOGIN_URL = '/users/login/'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 

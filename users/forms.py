@@ -7,4 +7,5 @@ class CustomUserCreationForm(UserCreationForm):
     
     class Meta:
         model = CustomUser
+        exclude = ['date_joined']  # Make sure date_joined is excluded
         fields = ('email', 'first_name', 'last_name', 'password1', 'password2')

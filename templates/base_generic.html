@@ -7,14 +7,36 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>{% block title %}Ticketing System{% endblock %}</title>
 		<link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+		<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" />
 	</head>
 	<body>
 		<header>
-			<nav>
+			<nav class="navbar navbar-expand-lg navbar-light bg-light">
+				<div class="container">
+					<a class="navbar-brand" href="{% url 'ticket_list' %}">Ticketing System</a>
+					<div class="collapse navbar-collapse" id="navbarNav">
+						<ul class="navbar-nav">
+							{% if user.is_authenticated %}
+							<li class="nav-item"><a class="nav-link" href="{% url 'ticket_list' %}">Tickets</a></li>
+							<li class="nav-item"><a class="nav-link" href="{% url 'create_ticket' %}">Create Ticket</a></li>
+							<li class="nav-item"><a class="nav-link" href="{% url 'password_change' %}">Change Password</a></li>
+							<form action="{% url 'logout' %}" method="POST">
+								{% csrf_token %}
+								<li class="nav-item"><button class="nav-link" type="submit">Logout</button></li>
+							</form>
+							{% else %}
+							<li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+							<li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+							{% endif %}
+						</ul>
+					</div>
+				</div>
+			</nav>
+			<!-- <nav>
 				<ul>
-                    {% if user.is_authenticated %}
+					{% if user.is_authenticated %}
 					<li><a href="{% url 'home' %}">Home</a></li>
-                    <li><a href="{% url 'password_change' %}">Change Password</a></li>
+					<li><a href="{% url 'password_change' %}">Change Password</a></li>
 					<form action="{% url 'logout' %}" method="POST">
 						{% csrf_token %}
 						<button type="submit">Logout</button>
@@ -24,7 +46,7 @@
 					<li><a href="{% url 'register' %}">Register</a></li>
 					{% endif %}
 				</ul>
-			</nav>
+			</nav> -->
 		</header>
 
 		<main>
