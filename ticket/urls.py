@@ -7,4 +7,5 @@ urlpatterns = [
     path('<uuid:ticket_uuid>/', views.ticket_detail, name='ticket_detail'),  # View ticket details
     path('<uuid:ticket_uuid>/assign/', views.assign_ticket, name='assign_ticket'),  # Assign users to ticket
     path('<uuid:ticket_uuid>/add_activity/', views.add_activity, name='add_activity'),  # Add activity to ticket
+    path('<uuid:ticket_uuid>/delete', views.delete_ticket, name='ticket_delete'),  # View ticket details
 ]

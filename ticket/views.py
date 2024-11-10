@@ -37,12 +37,10 @@ def create_ticket(request):
 @login_required
 def ticket_detail(request, ticket_uuid):
     ticket = get_object_or_404(Ticket, uuid=ticket_uuid)
-
     # Check if the user is assigned to the ticket or if they are a superuser
-    if request.user not in ticket.assigned_users.all():
-        messages.error(request, "You don't have permission to access this ticket.")
-        return redirect('ticket_list')  # Redirect to the ticket list
-
+    if not (request.user.is_superuser or request.user == ticket.creator or request.user in ticket.assigned_users.all()):
+            messages.error(request, "You don't have permission to access this ticket.")
+            return redirect('ticket_list')  # Redirect to the ticket list
     if request.method == 'POST':
         # Handle ticket status update (if the form for status update is submitted)
         if 'update_status' in request.POST:
@@ -75,18 +73,18 @@ def ticket_detail(request, ticket_uuid):
         'activity_form': activity_form,
         'activities': activities,
     })
+
 # Assign users to a ticket
 @login_required
 @user_passes_test(is_superuser)  # Restrict access to superusers only
 def assign_ticket(request, ticket_uuid):
     ticket = get_object_or_404(Ticket, uuid=ticket_uuid)
-    print(request.POST.getlist('users'))
+    print(ticket)
     if request.method == 'POST':
-        # Replace 'User.objects' with 'settings.AUTH_USER_MODEL.objects'
         user_ids = request.POST.getlist('users')
-
-        print(user_ids)
-        users = User.objects.filter(uuid__in=user_ids)  # Now using the actual User model
+        users = User.objects.filter(uuid__in=user_ids)  # Fetch users by IDs from the form
+        ticket.assigned_users.set(users)  # Assign users to the ticket
+        ticket.save()  # Save the changes to the ticket
         for user in users:
             TicketAssignment.objects.create(ticket=ticket, user=user)
         messages.success(request, 'Users assigned to ticket successfully!')
@@ -95,6 +93,7 @@ def assign_ticket(request, ticket_uuid):
         # Use the custom user model to fetch all users
         users = User.objects.all()
     return render(request, 'tickets/assign_ticket.html', {'ticket': ticket, 'users': users})
+
 
 # Add activity to ticket (status change, comments, etc.)
 @login_required

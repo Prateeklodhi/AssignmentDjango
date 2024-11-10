@@ -1,48 +1,44 @@
-{% extends 'base_generic.html' %}
-
-{% block content %}
-    <div class="container">
-        <h1>Tickets</h1>
-
-        <!-- Show success message if any -->
-        {% if messages %}
-            <div class="alert alert-success">
-                {% for message in messages %}
-                    <p>{{ message }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <!-- List of tickets -->
-        <div class="ticket-list">
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Priority</th>
-                        <th>Status</th>
-                        <th>Creator</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for ticket in tickets %}
-                        <tr>
-                            <td>{{ ticket.title }}</td>
-                            <td>{{ ticket.get_priority_display }}</td>
-                            <td>{{ ticket.status }}</td>
-                            <td>{{ ticket.creator.first_name }}</td>
-                            <td>
-                                <a href="{% url 'ticket_detail' ticket.uuid %}" class="btn btn-info">View Details</a>
-                            </td>
-                        </tr>
-                    {% empty %}
-                        <tr>
-                            <td colspan="5" class="text-center">No tickets available.</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
+{% extends 'base_generic.html' %} {% block content %}
+<div class="container">
+	<h1>Tickets</h1>
+	<!-- List of tickets -->
+	<div class="ticket-list">
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Title</th>
+					<th>Priority</th>
+					<th>Status</th>
+					<th>Creator</th>
+					<th>Actions</th>
+					{% if user.is_superuser %}
+					<th>Delete</th>
+					{% endif %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for ticket in tickets %}
+				<tr>
+					<td>{{ ticket.title }}</td>
+					<td>{{ ticket.get_priority_display }}</td>
+					<td>{{ ticket.status }}</td>
+					<td>{{ ticket.creator.first_name }}</td>
+					<td>
+						<a href="{% url 'ticket_detail' ticket.uuid %}" class="btn btn-info">View Details</a>
+					</td>
+					{% if user.is_superuser %}
+					<td>
+						<a href="{% url 'ticket_delete' ticket.uuid %}" class="btn btn-danger">Delete</a>
+					</td>
+					{% endif %}
+				</tr>
+				{% empty %}
+				<tr>
+					<td colspan="5" class="text-center">No tickets available.</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+</div>
 {% endblock %}
