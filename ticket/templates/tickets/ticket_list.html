@@ -19,6 +19,7 @@
 			<tbody>
 				{% for ticket in tickets %}
 				<tr>
+					{% if user in ticket.assigned_users.all or user == ticket.creator or user.is_superuser %}
 					<td>{{ ticket.title }}</td>
 					<td>{{ ticket.get_priority_display }}</td>
 					<td>{{ ticket.status }}</td>
@@ -30,7 +31,7 @@
 					<td>
 						<a href="{% url 'ticket_delete' ticket.uuid %}" class="btn btn-danger">Delete</a>
 					</td>
-					{% endif %}
+					{% endif %} {% endif %}
 				</tr>
 				{% empty %}
 				<tr>
