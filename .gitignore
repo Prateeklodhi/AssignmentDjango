@@ -88,3 +88,6 @@ ehthumbs.db
 *.old
 *.orig
 *.backup
+
+
+test.*
